@@ -6,7 +6,7 @@ from datetime import datetime
 from api import PChomeAPI, PChomeAPIError
 from config import Config
 from db import PriceDatabase
-from notifier import SlackNotifier
+from slack_notifier import SlackNotifier
 
 
 def main() -> int:
