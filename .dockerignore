@@ -28,6 +28,9 @@ docs/
 *.md
 !README.md
 
+# Kubernetes
+k8s/
+
 # Testing and development
 .ruff_cache/
 .mypy_cache/
