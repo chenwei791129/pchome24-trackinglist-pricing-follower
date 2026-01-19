@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pchome-tracker-db
+  labels:
+    app: pchome-tracker
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  # Uncomment and modify if you need a specific storage class
+  # storageClassName: standard

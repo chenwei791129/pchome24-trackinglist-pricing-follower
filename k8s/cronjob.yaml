@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pchome-tracker
+  labels:
+    app: pchome-tracker
+spec:
+  # Run every 6 hours
+  schedule: "0 */6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: pchome-tracker
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: pchome-tracker
+              image: ghcr.io/chenwei791129/pchome24-trackinglist-pricing-follower:latest
+              imagePullPolicy: Always
+              envFrom:
+                - secretRef:
+                    name: pchome-tracker-secret
+              volumeMounts:
+                - name: db-storage
+                  mountPath: /app/db
+              resources:
+                requests:
+                  memory: "64Mi"
+                  cpu: "50m"
+                limits:
+                  memory: "128Mi"
+                  cpu: "200m"
+          volumes:
+            - name: db-storage
+              persistentVolumeClaim:
+                claimName: pchome-tracker-db
