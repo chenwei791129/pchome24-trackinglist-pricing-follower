@@ -13,6 +13,8 @@ class Config:
 
     pchome_ecwebsess: str
     slack_webhook_url: str | None
+    telegram_bot_token: str | None
+    telegram_chat_id: str | None
     db_path: Path
 
     @classmethod
@@ -32,5 +34,7 @@ class Config:
         return cls(
             pchome_ecwebsess=ecwebsess,
             slack_webhook_url=os.getenv("SLACK_WEBHOOK_URL"),
+            telegram_bot_token=os.getenv("TELEGRAM_BOT_TOKEN"),
+            telegram_chat_id=os.getenv("TELEGRAM_CHAT_ID"),
             db_path=project_root / "db" / "prices.db",
         )
