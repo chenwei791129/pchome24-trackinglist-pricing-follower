@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A Python CLI tool for tracking product prices on PChome 24h shopping website. Sends Slack notifications when tracked products reach historical low prices.
+A Python CLI tool for tracking product prices on PChome 24h shopping website. Sends Slack and/or Telegram notifications when tracked products reach historical low prices.
 
 ## Quick Commands
 
@@ -30,11 +30,12 @@ make docker-run    # Run in container
 
 ```
 src/
-├── main.py       # CLI entry point, main business logic
-├── api.py        # PChome API client
-├── db.py         # SQLite database operations
-├── notifier.py   # Slack notification sender
-└── config.py     # Environment variable loader
+├── main.py              # CLI entry point, main business logic
+├── api.py               # PChome API client
+├── db.py                # SQLite database operations
+├── slack_notifier.py    # Slack notification sender
+├── telegram_notifier.py # Telegram notification sender
+└── config.py            # Environment variable loader
 ```
 
 ## Key API Documentation
@@ -85,6 +86,8 @@ current_price = promo_price if promo_price else regular_price
 |----------|----------|-------------|
 | `PCHOME_ECWEBSESS` | ✅ | PChome Session Cookie |
 | `SLACK_WEBHOOK_URL` | ❌ | Slack Webhook (no notification if not set) |
+| `TELEGRAM_BOT_TOKEN` | ❌ | Telegram Bot Token (both required for Telegram) |
+| `TELEGRAM_CHAT_ID` | ❌ | Telegram Chat ID (both required for Telegram) |
 
 ## Common Maintenance Tasks
 
