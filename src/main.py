@@ -30,9 +30,7 @@ def main() -> int:
     # Initialize Telegram notifier
     telegram_notifier = None
     if config.telegram_bot_token and config.telegram_chat_id:
-        telegram_notifier = TelegramNotifier(
-            config.telegram_bot_token, config.telegram_chat_id
-        )
+        telegram_notifier = TelegramNotifier(config.telegram_bot_token, config.telegram_chat_id)
     elif config.telegram_bot_token or config.telegram_chat_id:
         print("⚠️  Warning: Both TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must be set")
 
@@ -95,7 +93,7 @@ def main() -> int:
                     price_info = prices.get(product.id)
                     if not price_info:
                         print(f"   ⚠️  {product.name[:50]}")
-                        print(f"       價格: N/A")
+                        print("       價格: N/A")
                         print()
                         continue
 
@@ -114,7 +112,9 @@ def main() -> int:
                         drop = historical_low - current_price
                         drop_pct = (drop / historical_low) * 100
                         icon = "🔻"
-                        status_line = f"（歷史新低！原低價 NT${historical_low:,}，降 {drop_pct:.1f}%）"
+                        status_line = (
+                            f"（歷史新低！原低價 NT${historical_low:,}，降 {drop_pct:.1f}%）"
+                        )
 
                         # Send Slack notification
                         if slack_notifier.send_price_drop_alert(
@@ -138,7 +138,10 @@ def main() -> int:
                         status_line = f"（歷史低價 NT${historical_low:,}）"
 
                     # Print product info
-                    name_display = product.name if len(product.name) <= 50 else product.name[:47] + "..."
+                    if len(product.name) <= 50:
+                        name_display = product.name
+                    else:
+                        name_display = product.name[:47] + "..."
                     print(f"   {icon} {name_display}")
                     print(f"       價格: NT${current_price:,} {status_line}")
                     print()

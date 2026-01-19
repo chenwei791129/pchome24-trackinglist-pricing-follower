@@ -107,9 +107,7 @@ class PChomeAPI:
         item_ids = [f"{pid}-000" for pid in product_ids]
 
         # API accepts comma-separated list of product IDs
-        response = self.client.get(
-            f"{BUTTON_API_URL}&id={','.join(item_ids)}&fields=Id,Price"
-        )
+        response = self.client.get(f"{BUTTON_API_URL}&id={','.join(item_ids)}&fields=Id,Price")
 
         if response.status_code == 403:
             raise PChomeAPIError("Session expired or invalid. Please update PCHOME_ECWEBSESS.")

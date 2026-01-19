@@ -60,8 +60,7 @@ class TelegramNotifier:
                 return True
             else:
                 print(
-                    f"Failed to send Telegram notification: "
-                    f"{response.status_code} {response.text}"
+                    f"Failed to send Telegram notification: {response.status_code} {response.text}"
                 )
                 return False
         except httpx.RequestError as e:

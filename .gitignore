@@ -58,3 +58,6 @@ htmlcov/
 
 # Claude Code
 .claude/settings.local.json
+
+# Kubernetes secrets (use secret.example.yaml as template)
+k8s/secret.yaml
