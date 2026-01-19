@@ -7,6 +7,7 @@ from api import PChomeAPI, PChomeAPIError
 from config import Config
 from db import PriceDatabase
 from slack_notifier import SlackNotifier
+from telegram_notifier import TelegramNotifier
 
 
 def main() -> int:
@@ -24,12 +25,26 @@ def main() -> int:
         return 1
 
     # Initialize components
-    notifier = SlackNotifier(config.slack_webhook_url)
+    slack_notifier = SlackNotifier(config.slack_webhook_url)
 
-    if notifier.enabled:
+    # Initialize Telegram notifier
+    telegram_notifier = None
+    if config.telegram_bot_token and config.telegram_chat_id:
+        telegram_notifier = TelegramNotifier(
+            config.telegram_bot_token, config.telegram_chat_id
+        )
+    elif config.telegram_bot_token or config.telegram_chat_id:
+        print("⚠️  Warning: Both TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must be set")
+
+    if slack_notifier.enabled:
         print("📢 Slack notifications: Enabled")
     else:
         print("📢 Slack notifications: Disabled (no webhook URL)")
+
+    if telegram_notifier:
+        print("📢 Telegram notifications: Enabled")
+    else:
+        print("📢 Telegram notifications: Disabled")
 
     print(f"💾 Database: {config.db_path}\n")
 
@@ -102,7 +117,16 @@ def main() -> int:
                         status_line = f"（歷史新低！原低價 NT${historical_low:,}，降 {drop_pct:.1f}%）"
 
                         # Send Slack notification
-                        if notifier.send_price_drop_alert(
+                        if slack_notifier.send_price_drop_alert(
+                            product_id=product.id,
+                            product_name=product.name,
+                            current_price=current_price,
+                            historical_low=historical_low,
+                        ):
+                            alerts_sent += 1
+
+                        # Send Telegram notification
+                        if telegram_notifier and telegram_notifier.send_price_drop_alert(
                             product_id=product.id,
                             product_name=product.name,
                             current_price=current_price,
@@ -129,8 +153,8 @@ def main() -> int:
                 print(f"   • New products added: {len(new_ids)}")
                 print(f"   • Products removed: {len(removed_ids)}")
                 print(f"   • New historical lows: {new_lows}")
-                if notifier.enabled:
-                    print(f"   • Slack alerts sent: {alerts_sent}")
+                if slack_notifier.enabled or telegram_notifier:
+                    print(f"   • Alerts sent: {alerts_sent}")
                 print(f"{'=' * 60}")
 
     except PChomeAPIError as e:
