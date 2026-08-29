@@ -1,5 +1,8 @@
 name: Build and Push Docker Image
 
+# The build itself lives in chenwei791129/.github so the pinned action versions
+# are maintained in exactly one place across repositories. This project already
+# published to ghcr.io only; the image reference is unchanged.
 on:
   push:
     branches:
@@ -10,55 +13,19 @@ on:
     branches:
       - main
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Log in to Container Registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v4
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels)
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix=
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+    uses: chenwei791129/.github/.github/workflows/build-and-push-image.yml@main
+    with:
+      # image-name is omitted: this project publishes under its full
+      # owner/repository path, which is the shared workflow's default.
+      #
+      # latest is tagged on default-branch pushes rather than the shared
+      # latest=auto flavor, which would only apply it to semver tags.
+      enable-latest-tag: false
+      additional-tags: |
+        type=sha,prefix=
+        type=raw,value=latest,enable={{is_default_branch}}
