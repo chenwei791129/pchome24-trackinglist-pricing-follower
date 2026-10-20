@@ -28,7 +28,7 @@ class PriceDatabase:
         self.conn.row_factory = sqlite3.Row
         self._init_tables()
 
-    def __enter__(self) -> "PriceDatabase":
+    def __enter__(self) -> PriceDatabase:
         return self
 
     def __exit__(self, *args: object) -> None:

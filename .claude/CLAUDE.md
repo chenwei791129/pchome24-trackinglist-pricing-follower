@@ -18,7 +18,7 @@ make docker-run    # Run in container
 
 ## Tech Stack
 
-- **Language**: Python 3.13
+- **Language**: Python 3.15
 - **Package Manager**: uv (not pip)
 - **Linter**: ruff
 - **Type Checker**: ty (by Astral)
@@ -113,14 +113,14 @@ When user's `ECWEBSESS` cookie expires, 403 error occurs. Refer to `docs/COOKIE_
 
 ### 4. Docker Related
 
-- Dockerfile uses multi-stage build, image size ~149 MB
+- Dockerfile uses a multi-stage Alpine build, image size ~72 MB
 - Requires mounting `.env` and `db/` directory at runtime
 
 ## Code Style
 
 - Use ruff for linting and formatting
 - Line length limit: 100 characters
-- Target Python version: 3.13
+- Target Python version: 3.15
 - Comments in English
 
 ## Test Run

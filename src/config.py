@@ -18,7 +18,7 @@ class Config:
     db_path: Path
 
     @classmethod
-    def load(cls) -> "Config":
+    def load(cls) -> Config:
         """Load configuration from environment variables."""
         # Load .env file from project root
         project_root = Path(__file__).parent.parent

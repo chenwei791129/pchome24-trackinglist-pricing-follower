@@ -22,7 +22,8 @@ class SlackNotifier:
 
         Returns True if notification was sent successfully, False otherwise.
         """
-        if not self.enabled:
+        # The None check is implied by `enabled`; it narrows the type for httpx.
+        if not self.enabled or self.webhook_url is None:
             return False
 
         price_drop = historical_low - current_price
@@ -80,7 +81,7 @@ class SlackNotifier:
 
         try:
             response = httpx.post(
-                self.webhook_url,  # type: ignore[arg-type]
+                self.webhook_url,
                 json=message,
                 timeout=10.0,
             )

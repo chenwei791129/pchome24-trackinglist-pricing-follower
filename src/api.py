@@ -51,7 +51,7 @@ class PChomeAPI:
             timeout=30.0,
         )
 
-    def __enter__(self) -> "PChomeAPI":
+    def __enter__(self) -> PChomeAPI:
         return self
 
     def __exit__(self, *args: object) -> None:
